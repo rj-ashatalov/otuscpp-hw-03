@@ -12,7 +12,7 @@ int main(int argc, char const *argv[])
     try
     {
         auto ipPool = fill(input);
-        std::sort(ipPool.begin(), ipPool.end(), std::greater<Ip>());
+        ranges::sort(ipPool, ranges::greater());
 
         std::cout << toString(ipPool);
         std::cout << toString(filter(ipPool, 1));

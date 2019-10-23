@@ -9,6 +9,7 @@
 #include <fstream>
 #include <iterator>
 #include <sstream>
+#include "range/v3/all.hpp"
 
 using Ip = std::vector<int>;
 using IpPool = std::vector<Ip>;
@@ -60,8 +61,9 @@ std::string toString(const IpPool& pool)
     std::stringstream output;
     for(const auto& ip : pool)
     {
-        std::copy(ip.begin(), std::prev(ip.end()),std::ostream_iterator<int>(output, "."));
-        output << ip.back() << std::endl;
+//        std::copy(ip.begin(), std::prev(ip.end()),std::ostream_iterator<int>(output, "."));
+        auto res = ip | ranges::views::all;
+        output << res << std::endl;
     }
     return output.str();
 }

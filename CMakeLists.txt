@@ -8,8 +8,7 @@ endfunction()
 project(range VERSION 0.0.$ENV{TRAVIS_BUILD_NUMBER})
 
 include(${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)
-conan_basic_setup()
-
+conan_basic_setup(TARGETS)
 
 find_package(Threads REQUIRED)
 find_package(Boost COMPONENTS unit_test_framework REQUIRED)
@@ -36,11 +35,13 @@ set_target_properties(test_version PROPERTIES
 target_link_libraries(${PROJECT_NAME}
     patch_version
     Threads::Threads
+    CONAN_PKG::range-v3
 )
 
 target_link_libraries(test_version
     ${Boost_LIBRARIES}
     patch_version
+    CONAN_PKG::range-v3
 )
 
 target_include_directories(${PROJECT_NAME} PUBLIC src)
