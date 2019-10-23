@@ -23,7 +23,7 @@ add_executable(test_version tests/test_version.cpp src/ip_filter.h)
 add_library(patch_version lib.cpp)
 
 set_target_properties(${PROJECT_NAME} patch_version test_version PROPERTIES
-    CXX_STANDARD 14
+    CXX_STANDARD 17
     CXX_STANDARD_REQUIRED ON
     COMPILE_OPTIONS "-Wpedantic;-Wall;-Wextra"
 )
