@@ -11,7 +11,7 @@ BOOST_AUTO_TEST_CASE(test_version)
     BOOST_CHECK(version() > 0);
 }
 
-BOOST_AUTO_TEST_CASE(ip_filter_full_test)
+BOOST_AUTO_TEST_CASE(test_range_full)
 {
     std::ifstream input{"../ip_filter.tsv"};
 
