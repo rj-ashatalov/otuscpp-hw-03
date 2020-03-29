@@ -58,13 +58,25 @@ IpPool fill(std::istream* input)
 
 std::string toString(const IpPool& pool)
 {
+    auto res = pool | ranges::views::transform([&](const auto& ip)
+    {
+        auto res = ip | ranges::views::transform([&](const auto& item)
+        {
+            return std::to_string(item);
+        }) | ranges::views::intersperse(".");
+        return ranges::actions::join(res) | ranges::to<std::string>();
+    });
+
     std::stringstream output;
-    for (const auto& ip : pool)
+    ranges::copy(res, ranges::ostream_iterator<>(output, "\n"));
+    return output.str();
+
+/*    for (const auto& ip : pool)
     {
         std::copy(ip.begin(), std::prev(ip.end()), std::ostream_iterator<int>(output, "."));
         output << ip.back() << std::endl;
     }
-    return output.str();
+    return output.str();*/
 }
 
 template<class T>
