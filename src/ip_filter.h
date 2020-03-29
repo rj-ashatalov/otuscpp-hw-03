@@ -20,13 +20,13 @@ using IpPool = std::vector<Ip>;
 // ("11.", '.') -> ["11", ""]
 // (".11", '.') -> ["", "11"]
 // ("11.22", '.') -> ["11", "22"]
-std::vector<std::string> split(const std::string &str, char d)
+std::vector<std::string> split(const std::string& str, char d)
 {
     std::vector<std::string> r;
 
     std::string::size_type start = 0;
     std::string::size_type stop = str.find_first_of(d);
-    while(stop != std::string::npos)
+    while (stop != std::string::npos)
     {
         auto&& result = str.substr(start, stop - start);
         r.push_back(result);
@@ -43,11 +43,11 @@ std::vector<std::string> split(const std::string &str, char d)
 IpPool fill(std::istream* input)
 {
     IpPool ipPool;
-    for(std::string line; std::getline(*input, line);)
+    for (std::string line; std::getline(*input, line);)
     {
         std::vector<std::string> v = split(line, '\t');
         Ip ip;
-        for(auto rawIpPart : split(v.at(0), '.'))
+        for (auto rawIpPart : split(v.at(0), '.'))
         {
             ip.push_back(std::stoi(rawIpPart));
         }
@@ -59,13 +59,34 @@ IpPool fill(std::istream* input)
 std::string toString(const IpPool& pool)
 {
     std::stringstream output;
+    for (const auto& ip : pool)
+    {
+        std::copy(ip.begin(), std::prev(ip.end()), std::ostream_iterator<int>(output, "."));
+        output << ip.back() << std::endl;
+    }
+    return output.str();
+
+//    auto output = pool | ranges::views::transform([&](Ip pool)
+//            {
+//                std::string res = "XX,";
+//                return res;
+//            });
+//
+//    return ranges::views::all(output);
+
+
+
+/*    std::stringstream output;
     for(const auto& ip : pool)
     {
 //        std::copy(ip.begin(), std::prev(ip.end()),std::ostream_iterator<int>(output, "."));
-        auto res = ip | ranges::views::all;
+        auto res = ip | ranges::views::transform([&](auto item)
+        {
+            return std::to_string(item);
+        }) | ranges::views::join(".") | ranges::to<std::string>();
         output << res << std::endl;
     }
-    return output.str();
+    return output.str();*/
 }
 
 template<class T>
@@ -114,12 +135,23 @@ template<class T, class... Types>
 IpPool filter_any(const IpPool& pool, T first, Types... args)
 {
     std::vector<T> filterList{first, args...};
-    IpPool result;
+    return pool | ranges::views::filter([&](const auto& ip)
+    {
+        return ranges::any_of(ip, [&](const auto& item)
+        {
+            return ranges::any_of(filterList, [&](const auto& filterItem)
+            {
+                return item == filterItem;
+            });
+        });
+    }) | ranges::to<std::vector>();
+
+    /*IpPool result;
     std::copy_if(pool.begin(), pool.end(), std::back_inserter(result), [&](const auto& ip)
     {
         return std::find_first_of(ip.begin(), ip.end(), filterList.begin(), filterList.end()) != ip.end();
     });
-    return result;
+    return result;*/
 }
 
 
