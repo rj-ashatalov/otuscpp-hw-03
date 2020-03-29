@@ -14,9 +14,9 @@ int main(int argc, char const *argv[])
         auto ipPool = fill(input);
         ranges::sort(ipPool, ranges::greater());
 
-//        std::cout << toString(ipPool);
-//        std::cout << toString(filter(ipPool, 1));
-//        std::cout << toString(filter(ipPool, 46, 70));
+        std::cout << toString(ipPool);
+        std::cout << toString(filter(ipPool, 1));
+        std::cout << toString(filter(ipPool, 46, 70));
         std::cout << toString(filter_any(ipPool, 46));
     }
     catch(const std::exception &e)

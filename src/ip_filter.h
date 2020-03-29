@@ -65,64 +65,32 @@ std::string toString(const IpPool& pool)
         output << ip.back() << std::endl;
     }
     return output.str();
-
-//    auto output = pool | ranges::views::transform([&](Ip pool)
-//            {
-//                std::string res = "XX,";
-//                return res;
-//            });
-//
-//    return ranges::views::all(output);
-
-
-
-/*    std::stringstream output;
-    for(const auto& ip : pool)
-    {
-//        std::copy(ip.begin(), std::prev(ip.end()),std::ostream_iterator<int>(output, "."));
-        auto res = ip | ranges::views::transform([&](auto item)
-        {
-            return std::to_string(item);
-        }) | ranges::views::join(".") | ranges::to<std::string>();
-        output << res << std::endl;
-    }
-    return output.str();*/
 }
 
 template<class T>
 IpPool filterInternal(const IpPool& pool, size_t index, T first)
 {
-    IpPool result;
     if (pool.size() <= 0 || index >= pool.begin()->size())
     {
-        return result;
+        return IpPool{};
     }
 
-    auto iterFilterFirst = std::find_if(pool.begin(), pool.end(), [&](const auto& ip)
+    return pool | ranges::views::filter([&](const auto& ip)
     {
         return ip[index] == first;
-    });
-
-    auto iterFilterLast = std::find_if(iterFilterFirst, pool.end(), [&](const auto& ip)
-    {
-        return ip[index] < first;
-    });
-
-    std::copy(iterFilterFirst, iterFilterLast, std::back_inserter(result));
-    return result;
+    }) | ranges::to<std::vector>();
 }
 
 template<class T, class... Types>
 IpPool filterInternal(const IpPool& pool, size_t index, T first, Types... args)
 {
-    IpPool result;
     if (pool.size() <= 0)
     {
-        return result;
+        return IpPool{};
     }
 
-    result = filterInternal(pool, index, first);
-    return filterInternal(result, index + 1, args...);
+    auto result = filterInternal(pool, index, first);
+    return filterInternal(result, index + 1, args...) | ranges::to<std::vector>();
 }
 
 template<class... Types>
