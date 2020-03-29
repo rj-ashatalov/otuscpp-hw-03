@@ -65,8 +65,11 @@ std::string toString(const IpPool& pool)
             return std::to_string(item);
         }) | ranges::views::intersperse(".");
         return ranges::actions::join(res) | ranges::to<std::string>();
-    }) | ranges::views::intersperse("\n");
-    return ranges::actions::join(ips) | ranges::to<std::string>();
+    });
+
+    std::stringstream output;
+    ranges::copy(ips, ranges::ostream_iterator<>(output, "\n"));
+    return output.str();
 }
 
 template<class T>
