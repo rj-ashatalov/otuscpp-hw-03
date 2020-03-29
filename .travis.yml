@@ -2,14 +2,14 @@ dist: xenial
 language: cpp
 compiler: clang
 install:
-  - pip install conan
-  - conan user
+  - sudo pip install conan
+  - sudo conan user
 addons:
   apt:
     packages:
     - libboost-test-dev
 script:
-- conan install .
+- sudo conan install .
 - cmake .
 - cmake --build .
 - cmake --build . --target test
