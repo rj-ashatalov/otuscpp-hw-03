@@ -135,23 +135,13 @@ template<class T, class... Types>
 IpPool filter_any(const IpPool& pool, T first, Types... args)
 {
     std::vector<T> filterList{first, args...};
-    return pool | ranges::views::filter([&](const auto& ip)
+    return pool | ranges::views::filter(std::bind(ranges::any_of, std::placeholders::_1, [&](const auto& item)
     {
-        return ranges::any_of(ip, [&](const auto& item)
+        return ranges::any_of(filterList, [&](const auto& filterItem)
         {
-            return ranges::any_of(filterList, [&](const auto& filterItem)
-            {
-                return item == filterItem;
-            });
+            return item == filterItem;
         });
-    }) | ranges::to<std::vector>();
-
-    /*IpPool result;
-    std::copy_if(pool.begin(), pool.end(), std::back_inserter(result), [&](const auto& ip)
-    {
-        return std::find_first_of(ip.begin(), ip.end(), filterList.begin(), filterList.end()) != ip.end();
-    });
-    return result;*/
+    })) | ranges::to<std::vector>();
 }
 
 
